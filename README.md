@@ -29,7 +29,9 @@ cp -R youtube-english-study/youtube-english-study ~/.claude/skills/
 
 > 英文学习 https://www.youtube.com/watch?v=xxxxxxxxxxx
 
-Claude 会下载字幕、划分场景、标注短语和音标，校验后生成 `<视频标题>-英语精读本.html`。
+Claude 会下载字幕、划分场景、标注短语和音标，校验后生成 `<视频标题>-英语精读本.html`，并自动上传到本仓库的 `pages/`。
+
+不想自动上传就删掉 `SKILL.md` 里的第 7 步；想传到自己的仓库，改 `scripts/publish.py` 顶部的 `REPO`。
 
 视频需要有英文字幕（官方字幕最好，自动字幕也行，但可能有识别错误）。
 
@@ -39,16 +41,16 @@ Claude 会下载字幕、划分场景、标注短语和音标，校验后生成 
 |---|---|
 | `youtube-english-study/SKILL.md` | skill 的工作流程 |
 | `youtube-english-study/references/annotation-guide.md` | 场景、标注、音标的写作规范 |
-| `youtube-english-study/scripts/` | `fetch.py` 取字幕，`check.py` 校验，`build.py` 生成页面，`drop.py` 去掉字幕杂质 |
+| `youtube-english-study/scripts/` | `fetch.py` 取字幕，`check.py` 校验，`build.py` 生成页面，`drop.py` 去掉字幕杂质，`publish.py` 上传 |
 | `youtube-english-study/assets/template.html` | 页面模板 |
-| `examples/` | 一个生成结果的示例 |
+| `pages/` | 生成的精读本页面 |
 
 ## 关于示例页和版权
 
-`examples/` 里的页面是用 Volka English 的视频 [LTVk3yUb5Mg](https://www.youtube.com/watch?v=LTVk3yUb5Mg) 生成的，其中的英文台词归原作者所有，仅作功能演示。原作者或版权方如要求移除，请提 issue，会立即删除。
+`pages/` 里的页面是用 YouTube 上的视频生成的，例如 Volka English 的视频 [LTVk3yUb5Mg](https://www.youtube.com/watch?v=LTVk3yUb5Mg)。页面中的英文台词归各视频作者所有，仅作学习与功能演示。原作者或版权方如要求移除，请提 issue，会立即删除。
 
 自己生成的页面请只用于个人学习，不要公开转载别人视频的台词。
 
 ## 许可证
 
-代码和 skill 以 MIT 许可证发布，不包含示例页中的第三方台词。
+代码和 skill 以 MIT 许可证发布，不包含 `pages/` 中的第三方台词。

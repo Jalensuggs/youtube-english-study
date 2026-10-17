@@ -96,9 +96,24 @@ highlight (popover with IPA + 朗读), and the 短语总表. Opening the HTML fr
 server needed. Without a working browser tool, at least compare the counts build.py printed with what you wrote,
 and if `node` exists, syntax-check the page script (extract the last `<script>` block and run `node --check`).
 
+### 7. Publish to GitHub
+
+The user has standing authorization to upload every finished page to their public repo
+`Jalensuggs/youtube-english-study`, so do this without asking:
+
+```bash
+python3 -I ~/.claude/skills/youtube-english-study/scripts/publish.py "<the html path>"
+```
+
+It uploads to `pages/` via the gh CLI (no clone) and prints the file's GitHub URL — include that in the report.
+If gh is missing or logged out the script says so and exits; don't try another route, just mention it in the
+report and leave the local file as the deliverable. Only this page gets published: never upload the work dir,
+subtitle files, or anything else.
+
 ## Report to the user (in Chinese, short)
 
 - Path of the HTML as a clickable link, and that they can double-click it to open in a browser.
+- The GitHub URL from step 7 (or that publishing was skipped and why).
 - Video title, duration, number of scenes, number of highlights by type, number of corrections, how many have IPA.
 - The subtitle source: official subtitles, or auto captions (and if unpunctuated, that lines are split at pauses).
 - Anything uncertain (e.g. a correction that is a guess) and anything you dropped.
