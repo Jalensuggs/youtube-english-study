@@ -1,6 +1,6 @@
 # youtube-english-study
 
-一个 [Claude Code](https://claude.com/claude-code) skill：给它一个 YouTube 链接，自动生成单文件的「英语精读本」HTML，双击就能在浏览器里学英语。
+一个支持 [Codex](https://developers.openai.com/codex/skills) 和 [Claude Code](https://claude.com/claude-code) 的 skill：给它一个 YouTube 链接，自动生成单文件的「英语精读本」HTML，双击就能在浏览器里学英语。
 
 ## 生成的页面有什么
 
@@ -14,24 +14,70 @@
 
 中文部分只有场景导读和短语释义，没有逐句翻译。
 
-## 安装
+## 安装到 Codex
 
-需要 [Claude Code](https://claude.com/claude-code)、Python 3 和 [yt-dlp](https://github.com/yt-dlp/yt-dlp)（`brew install yt-dlp`）。
+需要 Python 3.10+ 和 [yt-dlp](https://github.com/yt-dlp/yt-dlp)。生成页面不需要 API key。
 
 ```bash
 git clone https://github.com/Jalensuggs/youtube-english-study.git
-cp -R youtube-english-study/youtube-english-study ~/.claude/skills/
+cd youtube-english-study
+# 若尚未安装 yt-dlp，建议通过隔离环境安装：
+python3 -m venv .venv
+.venv/bin/python -m pip install yt-dlp
+# macOS/Linux：把 yt-dlp 加入当前终端 PATH
+export PATH="$PWD/.venv/bin:$PATH"
+# Windows PowerShell 对应：$env:Path = "$PWD\.venv\Scripts;$env:Path"
+python3 scripts/install_codex.py
+```
+
+默认安装到 `~/.agents/skills/youtube-english-study`，适用于本机的 Codex 任务。
+也可仅安装到指定项目（云环境推荐）：
+
+```bash
+python3 scripts/install_codex.py --project /path/to/project
+```
+
+项目安装路径为 `<project>/.agents/skills/youtube-english-study`。重新打开 Codex 会话后使用。
+安装器会完整复制脚本、模板与参考资料；重复执行会校验内容，存在不同文件时拒绝覆盖。
+升级时先备份并移走旧安装目录，再重新安装。`yt-dlp` 必须在运行 Codex 的环境 PATH 中。
+
+### 安装到 Claude Code
+
+```bash
+mkdir -p ~/.claude/skills
+cp -R youtube-english-study ~/.claude/skills/
 ```
 
 ## 使用
 
-在 Claude Code 里说：
+在 Codex 中说：
 
-> 英文学习 https://www.youtube.com/watch?v=xxxxxxxxxxx
+> $youtube-english-study 用这个视频学英语：https://www.youtube.com/watch?v=xxxxxxxxxxx
 
-Claude 会下载字幕、划分场景、标注短语和音标，校验后生成 `<视频标题>-英语精读本.html`，并自动上传到本仓库的 `pages/`。
+在 Claude Code 中也可直接说「英文学习 + YouTube 链接」。助手会下载字幕、划分场景、标注短语和音标，
+校验后在当前目录生成 `<视频标题>-英语精读本.html`。也可以在指令中指定输出目录。
 
-不想自动上传就删掉 `SKILL.md` 里的第 7 步；想传到自己的仓库，改 `scripts/publish.py` 顶部的 `REPO`。
+默认仅保存到本地。需要上传时，请明确说「把生成的页面上传到 owner/repository」。
+上传需要 GitHub CLI（`gh`）以及目标仓库写权限；脚本支持 `--repo owner/repository`。
+本次安装或上传 skill 代码不代表授权公开以后生成的视频字幕页面。
+
+### Codex 云环境
+
+当前任务已在隔离环境中，直接使用现有 checkout，无需新建 Git worktree。
+字幕下载需要允许访问 `youtube.com`、`www.youtube.com`、`youtu.be`，以及 YouTube 返回的
+字幕服务地址（可能包括 `*.youtube.com`、`*.googlevideo.com`、`*.ytimg.com`）。
+上传另需 `github.com`、`api.github.com`。实际访问受限、视频无英文字幕或触发登录/限流时，
+助手会报告具体原因，不能承诺每个视频都可下载。不要关闭 TLS 校验或在聊天中发送 cookie/token。
+
+### 验证
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+测试会安装 skill 到临时项目，检查重复安装及文件保护，并通过已安装的脚本完成
+字幕解析、数据校验和 HTML 生成；已安装 Node.js 时也检查生成页面的 JavaScript 语法。
+不需要网络或 GitHub 凭据。真实字幕下载需另用一个可访问的视频验证。
 
 视频需要有英文字幕（官方字幕最好，自动字幕也行，但可能有识别错误）。
 
